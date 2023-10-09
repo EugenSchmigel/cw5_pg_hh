@@ -66,8 +66,7 @@ class DBManager:
             SELECT * 
                 FROM vacancies
                 WHERE (vacancy_name) LIKE '%{keyword}%'
-                OR (vacancy_name) LIKE '%{keyword}'
-                OR (vacancy_name) LIKE '{keyword}%'""")
+                OR (vacancy_name) LIKE '%{keyword}%'""")
 
             data = cur.fetchall()
 
