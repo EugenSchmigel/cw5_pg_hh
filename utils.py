@@ -27,7 +27,8 @@ def insert_employers_to_db(data, database_name, **params):
     for employer in data:
         with conn.cursor() as cur:
             cur.execute('INSERT INTO companies (company_id, company_name, description)'
-                           'VALUES (%s, %s, %s)',
+                           'VALUES (%s, %s, %s)'
+                            'ON CONFLICT (company_id) DO NOTHING',
                            (employer["company"].get("id"), employer["company"].get("name"),
                             employer["company"].get("description")
                             ))
@@ -49,12 +50,25 @@ def create_db_tables(database_name, params):
                                vacancy_id int PRIMARY KEY,
                                company_id int REFERENCES companies(company_id),
                                vacancy_name VARCHAR,
+                               salary INTEGER,
                                description VARCHAR,
                                experience VARCHAR
                                )""")
     conn.commit()
     conn.close()
 
+
+def salary_filter(salary):
+    if salary is not None:
+        if salary['from'] is not None:
+            return salary['from'] + salary['to']
+        elif salary['to'] is not None:
+            return salary['from'] + salary['to']
+        elif salary['from'] is not None:
+            return salary['from']
+        elif salary['to'] is not None:
+            return salary['to']
+    return 0
 
 
 def insert_vacancies_to_db(data, database_name, **params):
@@ -63,10 +77,12 @@ def insert_vacancies_to_db(data, database_name, **params):
     for company in data:
         with conn.cursor() as cur:
             for vacancy in company['vacancies']:
+                salary = salary_filter(vacancy["salary"])
                 cur.execute('INSERT INTO vacancies'
-                               '(vacancy_id, company_id, vacancy_name, description, experience)'
-                               'VALUES (%s, %s, %s, %s, %s)',
-                               (str(vacancy["id"]), str(company["company"].get("id")), str(vacancy["name"]),
+                               '(vacancy_id, company_id, vacancy_name, salary, description, experience)'
+                               'VALUES (%s, %s, %s, %s, %s, %s)'
+                                'ON CONFLICT (vacancy_id) DO NOTHING',
+                               (str(vacancy["id"]), str(company["company"].get("id")), str(vacancy["name"]), str(salary),
                                 str(vacancy["snippet"].get("responsibility")),
                                 str(vacancy["experience"].get("name"))))
 

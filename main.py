@@ -22,4 +22,10 @@ insert_employers_to_db(get_data_from_hh(employers_ids), database_name, **params)
 insert_vacancies_to_db(get_data_from_hh(employers_ids), database_name, **params)
 
 # class DBManager
-DBManager(database_name, params)
+db = DBManager(database_name, params)
+
+print(db.get_companies_and_vacancies_count())
+print(db.get_all_vacancies())
+print(db.get_avg_salary())
+print(db.get_vacancies_with_highest_salary())
+print(db.get_vacancies_with_keyword('менеджер'))
