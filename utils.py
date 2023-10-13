@@ -60,9 +60,7 @@ def create_db_tables(database_name, params):
 
 def salary_filter(salary):
     if salary is not None:
-        if salary['from'] is not None:
-            return salary['from'] + salary['to']
-        elif salary['to'] is not None:
+        if salary['from'] is not None and salary['to'] is not None:
             return salary['from'] + salary['to']
         elif salary['from'] is not None:
             return salary['from']
